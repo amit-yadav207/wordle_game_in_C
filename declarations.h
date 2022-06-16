@@ -1,4 +1,11 @@
-bool isCorrectGuess(char *guess, char *ans, char *letters, int *score,char* usedLetters);
+#include "header.h"
+struct PreGuess
+{
+    char ch;
+    char*color;
+};
+typedef struct PreGuess preGuess;//previous guess ,alphabet and bg color
+bool isCorrectGuess(char *guess, char *ans, char *letters, int *score,char* usedLetters,preGuess *pg,int noa,int total_atmpts);
 void clear();
 void hrline();
 void gameHeading(char* color,char* difLevel);

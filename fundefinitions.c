@@ -1,6 +1,12 @@
 #include "header.h"
 #include "colors.h"
-bool isCorrectGuess(char *guess, char *ans, char *letters, int *score, char *usedLetters)
+struct PreGuess
+{
+    char ch;
+    char*color;
+};
+typedef struct PreGuess preGuess;//previous guess ,alphabet and bg color
+bool isCorrectGuess(char *guess, char *ans, char *letters, int *score, char *usedLetters,preGuess *pg,int noa,int total_atmpts)
 {
     int temp_score = 0;
     const int sizeOfWord = 5;
@@ -31,6 +37,7 @@ bool isCorrectGuess(char *guess, char *ans, char *letters, int *score, char *use
         }
     }
     printf("\n\t\tCLUE \t   \t:  ");
+    int num=5*(noa-1);
     for (int i = 0; i < sizeOfWord; i++) // print clue string
     {
         char x = guess[i];
@@ -38,16 +45,23 @@ bool isCorrectGuess(char *guess, char *ans, char *letters, int *score, char *use
         if (clue[i] == 'G')
         {
             printf(BG_GREEN " %c " COLOR_RESET " ", x);
+            pg[num].color=BG_GREEN;
+            
         }
         else if (clue[i] == 'Y')
         {
             printf(BG_YELLOW " %c " COLOR_RESET " ", x);
+             pg[num].color=BG_YELLOW;
         }
-        else
+        else{
             printf(BG_DIM " %c " COLOR_RESET " ", x);
+             pg[num].color=BG_DIM;
+        }
+        pg[num].ch=x;
+        num++;
     }
 
-    for (int i = 0; i < 26; i++)
+    for (int i = 0; i < 30; i++)
     {
 
         for (int j = 0; j < sizeOfWord; j++)
@@ -62,17 +76,11 @@ bool isCorrectGuess(char *guess, char *ans, char *letters, int *score, char *use
                 usedLetters[i] = 'n'; // purple
         }
     }
-    printf("\n\n\t\t\t\t\t   Keyboard\n\n\t\t\t    ");
+    printf("\n\n\t\t\t\t\t    Keyboard\t\t\t\tPrevious Guess\n\n\t\t\t    ");
     int j, k = 0;
     for (int i = 0; i < 3; i++)
     {
-
-        if (i == 2)
-        {
-            k = 1;
-            printf("  ");
-        }
-        for (j = i * 10 - k; j < 10 * (i + 1) - i && j < 26; j++)
+        for (j =i*10;j<10*(i+1); j++)
         {
             if (usedLetters[j] == 'g')
                 printf(BG_GREEN " %c " COLOR_RESET " ", letters[j]);
@@ -80,12 +88,38 @@ bool isCorrectGuess(char *guess, char *ans, char *letters, int *score, char *use
                 printf(BG_YELLOW " %c " COLOR_RESET " ", letters[j]);
             else if (usedLetters[j] == 'n') // not present
                 printf(BG_DIM  " %c " COLOR_RESET " ", letters[j]);
+            else if (usedLetters[j] == ' ') 
+               printf(COLOR_RESET  " %c " COLOR_RESET " ", 32);
             else
                 printf(BG_BLACK " %c " COLOR_RESET " ", letters[j]);
         }
-        printf("\n\n\t\t\t       ");
+        printf("\t\t");
+        int l=k+sizeOfWord;
+         while(k<l&&k<5*total_atmpts)
+         {
+              printf("%s %c " COLOR_RESET ,pg[k].color,pg[k].ch);
+             k++;
+         }
+     printf("\n\t\t\t\t\t\t\t\t\t\t");
+     l=k+sizeOfWord;
+      while(k<l&&k<5*total_atmpts)
+         {
+              printf("%s %c " COLOR_RESET,pg[k].color,pg[k].ch);
+             k++;
+         }
+         printf("\n\t\t\t    ");
     }
-
+if(total_atmpts==7)
+{
+  printf("\r\t\t\t\t\t\t\t\t\t\t");
+  int k=30;
+    int l=k+sizeOfWord;
+      while(k<l&&k<5*total_atmpts)
+         {
+              printf("%s %c " COLOR_RESET,pg[k].color,pg[k].ch);
+             k++;
+         }  
+}
     *score += temp_score; // increment final score
     printf("\n\t\tSCORE\t   \t:  " BOLD_MODE "%d" COLOR_RESET, temp_score);
     printf("\n\n");
@@ -163,7 +197,7 @@ void setDiffLevel(int*total_atmpts,char**difLevel,char**fileName,char**color)
 
 void getRandomWord(FILE**fptr,char**chosenWord)
 {
-     int wordCount = 2500; // from file
+     int wordCount = 415; // from file
             srand(time(NULL));
             int idx = (rand() % wordCount) + 1;
             while ((fscanf(*fptr, "%s", *chosenWord)) == 1 && idx--);

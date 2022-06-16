@@ -1,6 +1,7 @@
 #include "header.h"       //custom header file
 #include "colors.h"       //custom header file
 #include "declarations.h" //custom header file
+
 int main()
 {
     char choice;
@@ -16,12 +17,17 @@ int main()
         int total_atmpts;                                          //  total attempts set
         setDiffLevel(&total_atmpts, &difLevel, &fileName, &color); // setting difficulty level//sending address of pointers
         clear();
-        char letters[] = {"QWERTYUIOPASDFGHJKLZXCVBNM"}; // to show which letters are not used in previous guesses
-        char usedLetters[] = {"QWERTYUIOPASDFGHJKLZXCVBNM"};
+        preGuess pg[5*total_atmpts];                                  //array for storing guesses of each attempt along with bg color
+        char letters[] = {"QWERTYUIOP ASDFGHJKL ZXCVBNM  "}; // to show which letters are not used in previous guesses
+        char usedLetters[] = {"QWERTYUIOP ASDFGHJKL ZXCVBNM  "};
         int score = 0;                        // to keep the track of score in each round
         char pname[30];                       // for storing player name
         FILE *fptr = fopen("words.txt", "r"); // for getting random word from this FILE
-
+for(int i=0;i<5*total_atmpts;i++)//setting empty char and bg white for preGuess
+{
+    pg[i].ch=' ';
+    pg[i].color=BG_WHITE;
+}
         if (fptr != NULL)
         {
             gameHeading(color, difLevel);      // printing heading
@@ -35,7 +41,7 @@ int main()
             {
                 getInput(&color, &userInput, num_of_atmpts);
                 num_of_atmpts += 1;
-                isCorrect = isCorrectGuess(userInput, chosenWord, letters, &score, usedLetters);
+                isCorrect = isCorrectGuess(userInput, chosenWord, letters, &score, usedLetters,pg,num_of_atmpts,total_atmpts);
                 if (isCorrect)
                     break;
             }
@@ -64,10 +70,10 @@ int main()
             // opening respective file
             sfptr = fopen(fileName, "ab+");
             // count lines in file
-            int count = getLineCount(&sfptr); // getting serial number
+            int count=getLineCount(&sfptr);//getting serial number
             fprintf(sfptr, "\t\t\t  %02d\t\t\t  %-24s  %d\n\n", count / 2 + 1, pname, finalScore);
-            fclose(sfptr);                     // closing file
-            viewScoreBoard(&sfptr, &fileName); // opening score file
+            fclose(sfptr); // closing file
+            viewScoreBoard(&sfptr, &fileName);//opening score file
         }
         else
         {
@@ -77,6 +83,6 @@ int main()
         chosenWord = NULL;
         printf("\n\t\tWANT TO PLAY AGAIN ? (y/n)  :  ");
         scanf("\n%c", &choice);
-    } while (choice != 'n' && choice != 'N');
+    } while (choice != 'n'&&choice!='N');
     return 0;
 }
