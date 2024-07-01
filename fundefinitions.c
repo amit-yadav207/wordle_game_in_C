@@ -126,11 +126,16 @@ if(total_atmpts==7)
     // chheck if clue array is totally filled with 'G'
     return strcmp("GGGGG", clue) == 0;
 }
- void clear()
- {
-     //system("cls");//for windows os
-     system("clear"); //for online compiler
- }
+ 
+ 
+    void clear() {
+    #ifdef _WIN32
+        system("cls"); // for Windows
+    #else
+        system("clear"); // for Linux and other UNIX-based systems
+    #endif
+}
+ 
 void hrline()
 {
     // printf("\t\t------------------------------------------------------------------------------------------------");
